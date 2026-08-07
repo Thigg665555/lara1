@@ -14,7 +14,265 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '725645170604721');
     fbq('track', 'PageView');
-        </script>
+        </script><style>
+    /* Overlay do Modal */
+    .pix-modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        padding: 15px;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+
+    /* Cartão Principal */
+    .pix-modal-card {
+        background: #121620;
+        width: 100%;
+        max-width: 400px;
+        border-radius: 24px;
+        overflow: hidden;
+        color: #ffffff;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: auto;
+    }
+
+    /* Botão Fechar */
+    .pix-close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        width: 30px; height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Banner do Topo */
+    .pix-banner {
+        width: 100%;
+        height: 110px;
+        background: url('URL_DO_SEU_BANNER_EXISTENTE') center/cover no-repeat;
+        position: relative;
+    }
+
+    /* Avatar Redondo sobreposto */
+    .pix-avatar-container {
+        position: absolute;
+        bottom: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        border: 3px solid #121620;
+        overflow: visible;
+    }
+
+    .pix-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .pix-online-dot {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 12px;
+        height: 12px;
+        background: #00E676;
+        border: 2px solid #121620;
+        border-radius: 50%;
+    }
+
+    /* Informações do Perfil */
+    .pix-profile-info {
+        text-align: center;
+        margin-top: 42px;
+        padding: 0 20px;
+    }
+
+    .pix-profile-info h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .pix-verified {
+        background: #FF5C5C;
+        color: white;
+        border-radius: 50%;
+        width: 14px; height: 14px;
+        font-size: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pix-handle {
+        margin: 3px 0 0 0;
+        color: #8A96A3;
+        font-size: 13px;
+    }
+
+    /* Caixa de Benefícios */
+    .pix-benefits-box {
+        background: #1a202c;
+        margin: 15px 20px;
+        padding: 12px 15px;
+        border-radius: 14px;
+        border: 1px solid #2a3447;
+    }
+
+    .pix-benefits-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #ffb703;
+        margin-bottom: 8px;
+    }
+
+    .pix-benefits-box ul {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+        font-size: 12px;
+        color: #cbd5e1;
+    }
+
+    .pix-benefits-box li {
+        margin-bottom: 5px;
+    }
+
+    /* Cabeçalho de Pagamento e Preço */
+    .pix-payment-header {
+        padding: 0 20px;
+        text-align: left;
+    }
+
+    .pix-payment-title {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+
+    .pix-val-label {
+        font-size: 10px;
+        color: #8A96A3;
+        text-transform: uppercase;
+        display: block;
+    }
+
+    .pix-price {
+        font-size: 24px;
+        font-weight: 800;
+        color: #fff;
+        margin: 0 0 10px 0;
+    }
+
+    /* Área de Loading */
+    .pix-loading-area {
+        padding: 25px 20px;
+        text-align: center;
+    }
+
+    .pix-spinner {
+        width: 35px; height: 35px;
+        border: 3px solid rgba(255,255,255,0.1);
+        border-top-color: #FF5C5C;
+        border-radius: 50%;
+        animation: pix-spin 0.8s linear infinite;
+        margin: 0 auto 10px auto;
+    }
+
+    @keyframes pix-spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Conteúdo do Pix */
+    .pix-content-area {
+        padding: 0 20px 15px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pix-qrcode-box {
+        background: #ffffff;
+        padding: 10px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .pix-qrcode-box img {
+        width: 180px;
+        height: 180px;
+        display: block;
+    }
+
+    /* Copia e Cola */
+    .pix-copia-cola-container {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .pix-copia-cola-container input {
+        flex: 1;
+        background: #090c10;
+        border: 1px solid #2a3447;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        outline: none;
+    }
+
+    .pix-copy-btn {
+        background: #FF5C5C;
+        color: white;
+        border: none;
+        padding: 0 15px;
+        font-weight: 700;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background 0.2s;
+    }
+
+    .pix-copy-btn:hover {
+        background: #fa4545;
+    }
+
+    .pix-secure-footer {
+        text-align: center;
+        font-size: 11px;
+        color: #00E676;
+        padding: 12px;
+        background: #0c0f16;
+        border-top: 1px solid #1a2230;
+    }
+</style>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=725645170604721&ev=PageView&noscript=1"
     /></noscript>
@@ -480,38 +738,67 @@
 <!-- ========================================== -->
 
 <!-- Modal Pix (Oculto por padrão) -->
-<div id="pixModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); font-family: sans-serif;">
-    <div style="background: #1c1f2e; width: 90%; max-width: 380px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; text-align: center; border: 1px solid #2d3748;">
+<!-- MODAL DE CHECKOUT REDESENHADO -->
+<div id="pixModal" class="pix-modal-overlay">
+    <div class="pix-modal-card">
+        <!-- Botão de Fechar -->
+        <button class="pix-close-btn" onclick="closePixModal()">&times;</button>
         
-        <!-- Botão Fechar -->
-        <button onclick="closePixModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: #a0aec0; font-size: 24px; cursor: pointer;">&times;</button>
-
-        <h3 id="pixTitle" style="color: #fff; font-size: 22px; font-weight: bold; margin-bottom: 5px; margin-top: 0;">Gerando Pix...</h3>
-        <p id="pixSubtitle" style="color: #a0aec0; font-size: 14px; margin-bottom: 25px;">Aguarde um momento</p>
-
-        <!-- Loading (Carregamento) -->
-        <div id="pixLoading" style="display: flex; justify-content: center; padding: 30px 0;">
-            <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #FF5C5C; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+        <!-- Topo: Banner e Avatar -->
+        <div class="pix-banner">
+            <div class="pix-avatar-container">
+                <!-- Coloque o link da sua foto de perfil real -->
+                <img src="URL_DA_ SUA_FOTO_DE_PERFIL" alt="Perfil" class="pix-avatar">
+                <span class="pix-online-dot"></span>
+            </div>
         </div>
 
-        <!-- Área do QR Code (Escondida até carregar) -->
-        <div id="pixContent" style="display: none; flex-direction: column; align-items: center;">
-            
-            <!-- Imagem QR Code -->
-            <div style="background: #fff; padding: 10px; border-radius: 15px; margin-bottom: 20px;">
-                <img id="qrCodeImg" src="" alt="QR Code Pix" style="width: 200px; height: 200px; object-fit: contain;">
+        <!-- Nome e Handle -->
+        <div class="pix-profile-info">
+            <h2>Lara Jucah <span class="pix-verified">✓</span></h2>
+            <p class="pix-handle">@larajucah</p>
+        </div>
+
+        <!-- Caixa de Benefícios -->
+        <div class="pix-benefits-box">
+            <div class="pix-benefits-title">⭐ BENEFÍCIOS EXCLUSIVOS</div>
+            <ul>
+                <li>🔥 Vídeos com live + meu Ex Namorado</li>
+                <li>🔞 Mais de 734 mídias explícitas</li>
+                <li>💋 Melhores amigos no instagram</li>
+            </ul>
+        </div>
+
+        <!-- Seção de Pagamento e Valor -->
+        <div class="pix-payment-header">
+            <span class="pix-payment-title">Formas de pagamento</span>
+            <span class="pix-val-label">valor</span>
+            <h3 id="pixValorExibido" class="pix-price">R$ 14,90</h3>
+        </div>
+
+        <!-- Área de Loading -->
+        <div id="pixLoading" class="pix-loading-area">
+            <div class="pix-spinner"></div>
+            <p id="pixSubtitle">Gerando seu código Pix Seguro...</p>
+        </div>
+
+        <!-- Conteúdo do Pix (QR Code e Copia e Cola) -->
+        <div id="pixContent" class="pix-content-area" style="display: none;">
+            <div class="pix-qrcode-box">
+                <img id="qrCodeImg" src="" alt="QR Code Pix">
             </div>
             
-            <p style="color: #a0aec0; font-size: 12px; margin-bottom: 10px;">Ou use o Pix Copia e Cola:</p>
-            
-            <!-- Campo Copia e Cola -->
-            <div style="display: flex; width: 100%; background: #050505; border-radius: 10px; border: 1px solid #2d3748; overflow: hidden; margin-bottom: 15px;">
-                <input type="text" id="pixCopiaCola" style="flex: 1; background: transparent; border: none; color: #fff; padding: 12px; font-size: 12px; outline: none;" readonly>
-                <button onclick="copyPix(this)" style="background: #FF5C5C; color: #fff; border: none; padding: 0 15px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s;">
-                    COPIAR
-                </button>
+            <div class="pix-copia-cola-container">
+                <input type="text" id="pixCopiaCola" readonly />
+                <button onclick="copyPix(this)" class="pix-copy-btn">COPIAR</button>
             </div>
+        </div>
+
+        <div class="pix-secure-footer">
+            🔒 Pagamento 100% Seguro
+        </div>
+    </div>
+</div>
             
             <p style="color: #00A878; font-size: 12px; font-weight: bold;">🔒 Pagamento 100% Seguro</p>
         </div>
@@ -522,13 +809,17 @@
     let pixPollingInterval = null;
 
     function openCheckout(precoClicado = 19.90, nomeDoPlano = 'Padrão') {
+        // Exibe o modal e o loading
         document.getElementById('pixModal').style.display = 'flex';
         document.getElementById('pixContent').style.display = 'none';
         document.getElementById('pixLoading').style.display = 'flex';
         
-        document.getElementById('pixTitle').innerText = 'Plano ' + nomeDoPlano;
+        // Atualiza o preço dinamicamente no modal novo
+        const precoFormatado = precoClicado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        document.getElementById('pixValorExibido').innerText = precoFormatado;
         document.getElementById('pixSubtitle').innerText = 'Gerando seu código Pix Seguro...';
 
+        // Requisição para criar o pix na Netlify/Paradise
         fetch('/.netlify/functions/create_pix', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -540,18 +831,18 @@
             const txId = data.transaction_id || data.id;  
 
             if (txId && pixCopiaECola) {
-                // Preenche o campo Copia e Cola
+                // Preenche o input Copia e Cola
                 document.getElementById('pixCopiaCola').value = pixCopiaECola;
 
-                // GERA O QR CODE VISUAL AUTOMATICAMENTE USANDO O TEXTO DO PIX
+                // Gera o QR Code visual
                 const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCopiaECola)}`;
                 document.getElementById('qrCodeImg').src = qrCodeUrl;
                 
+                // Oculta o loading e mostra o conteúdo do pix
                 document.getElementById('pixLoading').style.display = 'none';
                 document.getElementById('pixContent').style.display = 'flex';
-                document.getElementById('pixTitle').innerText = 'Pague para Liberar';
-                document.getElementById('pixSubtitle').innerText = 'Abra o app do seu banco e pague o Pix';
 
+                // Inicia o polling de verificação
                 startPolling(txId);
             } else {
                 alert("Erro ao gerar Pix: " + (data.error || "Resposta inválida da API."));
@@ -574,10 +865,9 @@
                 .then(data => {
                     if (data.status === 'approved') {
                         clearInterval(pixPollingInterval);
-                        document.getElementById('pixTitle').innerText = 'Pagamento Aprovado! 🎉';
-                        document.getElementById('pixSubtitle').innerText = 'Redirecionando para o conteúdo...';
-                        document.getElementById('pixContent').style.display = 'none';
                         document.getElementById('pixLoading').style.display = 'flex';
+                        document.getElementById('pixContent').style.display = 'none';
+                        document.getElementById('pixSubtitle').innerText = 'Pagamento Aprovado! 🎉 Redirecionando...';
 
                         const redirectUrl = data.redirect_url || '/sucesso.html';
                         setTimeout(() => {
