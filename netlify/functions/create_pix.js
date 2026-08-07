@@ -12,7 +12,7 @@ exports.handler = async function(event, context) {
 
         const PARADISEPAGS_API_URL = "https://multi.paradisepags.com/api/v1/transaction.php"; 
         const TOKEN = "sk_e2534c5d49d754f6dab7036bc14c3fabea6ed027f40c4d7f17a3c9ab3131137f"; 
-        const PRODUCT_HASH = "prod_0d044a7710f1c8a0"; 
+        const PRODUCT_HASH = "prod_1ca34e13d4e233a8"; 
 
         const payload = {
             amount: Math.round(preco * 100),
