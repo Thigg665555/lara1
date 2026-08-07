@@ -736,12 +736,17 @@
 <!-- Modal Pix (Oculto por padrão) -->
 <!-- MODAL DE CHECKOUT REDESENHADO -->
 <<!-- Topo: Banner e Avatar -->
+        <!-- MODAL DE CHECKOUT (CÓDIGO CORRIGIDO) -->
+<div id="pixModal" class="pix-modal-overlay">
+    <div class="pix-modal-card">
+        <!-- Botão de Fechar -->
+        <button class="pix-close-btn" onclick="closePixModal()">&times;</button>
+        
+        <!-- Topo: Banner e Avatar -->
         <div class="pix-banner">
-            <!-- Cole a URL do seu Banner na linha abaixo -->
             <img src="images/Capa.PNG" alt="Banner" class="pix-banner-img">
             
             <div class="pix-avatar-container">
-                <!-- Cole a URL da sua Foto de Perfil na linha abaixo -->
                 <img src="images/Perfil.PNG" alt="Perfil" class="pix-avatar">
                 <span class="pix-online-dot"></span>
             </div>
@@ -788,17 +793,12 @@
             </div>
         </div>
 
+        <!-- Rodapé Seguro -->
         <div class="pix-secure-footer">
             🔒 Pagamento 100% Seguro
         </div>
     </div>
 </div>
-            
-            <p style="color: #00A878; font-size: 12px; font-weight: bold;">🔒 Pagamento 100% Seguro</p>
-        </div>
-    </div>
-</div>
-
 <script>
     let pixPollingInterval = null;
 
