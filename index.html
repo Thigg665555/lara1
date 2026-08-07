@@ -61,25 +61,20 @@
         justify-content: center;
     }
 
-    /* Banner do Topo */
+   /* Banner do Topo Enquadrado */
     .pix-banner {
         width: 100%;
-        height: 110px;
-        background: url('images/Capa.PNG') center/cover no-repeat;
+        height: 120px;
         position: relative;
+        overflow: hidden;
+        background: #1a202c;
     }
 
-    /* Avatar Redondo sobreposto */
-    .pix-avatar-container {
-        position: absolute;
-        bottom: -35px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 75px;
-        height: 75px;
-        border-radius: 50%;
-        border: 3px solid #121620;
-        overflow: visible;
+    .pix-banner-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
     }
 
     .pix-avatar {
@@ -739,15 +734,13 @@
 
 <!-- Modal Pix (Oculto por padrão) -->
 <!-- MODAL DE CHECKOUT REDESENHADO -->
-<div id="pixModal" class="pix-modal-overlay">
-    <div class="pix-modal-card">
-        <!-- Botão de Fechar -->
-        <button class="pix-close-btn" onclick="closePixModal()">&times;</button>
-        
-        <!-- Topo: Banner e Avatar -->
+<<!-- Topo: Banner e Avatar -->
         <div class="pix-banner">
+            <!-- Cole a URL do seu Banner na linha abaixo -->
+            <img src="images/Capa.PNG" alt="Banner" class="pix-banner-img">
+            
             <div class="pix-avatar-container">
-                <!-- Coloque o link da sua foto de perfil real -->
+                <!-- Cole a URL da sua Foto de Perfil na linha abaixo -->
                 <img src="images/Perfil.PNG" alt="Perfil" class="pix-avatar">
                 <span class="pix-online-dot"></span>
             </div>
