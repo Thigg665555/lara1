@@ -543,23 +543,25 @@
         })
         .then(response => response.json())
         .then(data => {                
-            const pixCopiaECola = data.qr_code;           // O texto Copia e Cola
-            const txId = data.transaction_id || data.id;  // O ID da transação para o polling
+            const pixCopiaECola = data.qr_code;           
+            const txId = data.transaction_id || data.id;  
 
             if (txId && pixCopiaECola) {
                 // Preenche o campo Copia e Cola
                 document.getElementById('pixCopiaCola').value = pixCopiaECola;
 
-                // GERA O QR CODE LOCALMENTE (Regra oficial da Paradise)
-                QRCode.toDataURL(pixCopiaECola, { width: 300, margin: 2 }, function (err, urlImage) {
-                    if (!err && urlImage) {
-                        document.getElementById('qrCodeImg').src = urlImage;
-                    } else {
-                        console.error("Erro ao gerar imagem do QR Code:", err);
-                    }
-                });
+                // Tenta gerar o QR Code visual de forma segura (se a biblioteca existir)
+                if (typeof QRCode !== 'undefined') {
+                    QRCode.toDataURL(pixCopiaECola, { width: 300, margin: 2 }, function (err, urlImage) {
+                        if (!err && urlImage) {
+                            document.getElementById('qrCodeImg').src = urlImage;
+                        }
+                    });
+                } else {
+                    console.warn("A biblioteca QRCode não foi carregada no <head>.");
+                }
                 
-                // Mostra o QR Code na tela
+                // Mostra o conteúdo do Pix na tela
                 document.getElementById('pixLoading').style.display = 'none';
                 document.getElementById('pixContent').style.display = 'flex';
                 document.getElementById('pixTitle').innerText = 'Pague para Liberar';
@@ -568,14 +570,14 @@
                 // 3. Inicia a verificação de pagamento (Polling)
                 startPolling(txId);
             } else {
-                alert("Erro ao gerar Pix. Resposta inválida da API.");
+                alert("Erro ao gerar Pix: " + (data.error || "Resposta inválida da API."));
                 console.log("Retorno da API:", data);
                 closePixModal();
             }
         }) 
         .catch(err => {
-            console.error(err);
-            alert("Erro de conexão. Tente novamente.");
+            console.error("Erro capturado:", err);
+            alert("Erro de conexão com o servidor. Tente novamente.");
             closePixModal();
         });
     }
