@@ -10,7 +10,7 @@ exports.handler = async function(event, context) {
         const bodyData = JSON.parse(event.body || '{}');
         const preco = bodyData.preco || 19.90;
 
-        const PARADISEPAGS_API_URL = "https://api.paradisepags.com/api/v1/transaction.php"; 
+        const PARADISEPAGS_API_URL = "https://multi.paradisepags.com/api/v1/transaction.php"; 
         const TOKEN = "sk_e2534c5d49d754f6dab7036bc14c3fabea6ed027f40c4d7f17a3c9ab3131137f"; 
         const PRODUCT_HASH = "prod_0d044a7710f1c8a0"; 
 
