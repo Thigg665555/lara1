@@ -543,31 +543,30 @@
         })
         .then(response => response.json())
         .then(data => {                
-            // Ajuste aqui se a Paradise usar nomes diferentes para o QR Code
-            const qrCode = data.qr_code || data.qrcode; 
-            const pixKey = data.pix_key || data.pixCopiaECola || data.qrcode_text;
-            const txHash = data.hash || data.transaction_id || data.id; 
+            // Mapeamento correto baseado na documentação oficial da Paradise:
+            const pixCopiaECola = data.qr_code;           // O texto Copia e Cola
+            const qrCodeImgBase64 = data.qr_code_base64;  // A imagem do QR Code
+            const txId = data.transaction_id || data.id;  // O ID da transação para o polling
 
-            if (txHash && qrCode) {
-                // Prepara a imagem (se for base64 e não tiver o prefixo, a gente adiciona)
-                let imgSrc = qrCode;
-                if (!imgSrc.startsWith('http') && !imgSrc.startsWith('data:image')) {
-                    imgSrc = `data:image/png;base64,${qrCode}`;
+            if (txId && pixCopiaECola) {
+                // Preenche a imagem do QR Code corretamente
+                if (qrCodeImgBase64) {
+                    document.getElementById('qrCodeImg').src = qrCodeImgBase64;
                 }
 
-                document.getElementById('qrCodeImg').src = imgSrc;
-                document.getElementById('pixCopiaCola').value = pixKey;
+                // Preenche o campo Copia e Cola sem dar undefined
+                document.getElementById('pixCopiaCola').value = pixCopiaECola;
                 
-                // Mostra o QR Code
+                // Mostra o QR Code na tela
                 document.getElementById('pixLoading').style.display = 'none';
                 document.getElementById('pixContent').style.display = 'flex';
                 document.getElementById('pixTitle').innerText = 'Pague para Liberar';
                 document.getElementById('pixSubtitle').innerText = 'Abra o app do seu banco e pague o Pix';
 
-                // 3. Inicia a verificação de pagamento
-                startPolling(txHash);
+                // 3. Inicia a verificação de pagamento (Polling)
+                startPolling(txId);
             } else {
-                alert("Erro ao gerar Pix. O produto pode estar configurado errado na Paradise.");
+                alert("Erro ao gerar Pix. Resposta inválida da API.");
                 console.log("Retorno da API:", data);
                 closePixModal();
             }
@@ -579,28 +578,35 @@
         });
     }
 
-    function startPolling(hash) {
+    function startPolling(transactionId) {
         if (pixPollingInterval) clearInterval(pixPollingInterval);
 
         pixPollingInterval = setInterval(() => {
-            fetch(`/.netlify/functions/check_status?hash=${hash}`)
+            fetch(`/.netlify/functions/check_status?id=${transactionId}`)
                 .then(res => res.json())
                 .then(data => {
-                    // Se o status for pago, redireciona!
-                    if (data.status === 'paid' && data.redirect_url) {
+                    // A Paradise retorna 'approved' quando o pagamento é confirmado
+                    if (data.status === 'approved') {
                         clearInterval(pixPollingInterval);
                         document.getElementById('pixTitle').innerText = 'Pagamento Aprovado! 🎉';
                         document.getElementById('pixSubtitle').innerText = 'Redirecionando para o conteúdo...';
                         document.getElementById('pixContent').style.display = 'none';
                         document.getElementById('pixLoading').style.display = 'flex';
 
+                        // Redireciona para a página de sucesso/upsell (ajuste a URL se precisar)
+                        const redirectUrl = data.redirect_url || '/sucesso.html';
                         setTimeout(() => {
-                            window.location.href = data.redirect_url;
+                            window.location.href = redirectUrl;
                         }, 1500);
                     }
                 })
                 .catch(err => console.error(err));
-        }, 3000); // Checa a cada 3 segundos
+        }, 2000); // Checa a cada 2 segundos conforme a regra da Paradise
+
+        // Timeout de segurança: para após 15 minutos
+        setTimeout(() => {
+            if (pixPollingInterval) clearInterval(pixPollingInterval);
+        }, 15 * 60 * 1000);
     }
 
     function closePixModal() {
