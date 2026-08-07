@@ -538,18 +538,14 @@
         .then(data => {                
             const pixCopiaECola = data.qr_code;           
             const txId = data.transaction_id || data.id;  
-            let qrBase64 = data.qr_code_base64; 
 
             if (txId && pixCopiaECola) {
+                // Preenche o campo Copia e Cola
                 document.getElementById('pixCopiaCola').value = pixCopiaECola;
 
-                // Insere a imagem do QR Code direto da API formatada corretamente
-                if (qrBase64) {
-                    if (!qrBase64.startsWith('data:image')) {
-                        qrBase64 = `data:image/png;base64,${qrBase64}`;
-                    }
-                    document.getElementById('qrCodeImg').src = qrBase64;
-                }
+                // GERA O QR CODE VISUAL AUTOMATICAMENTE USANDO O TEXTO DO PIX
+                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCopiaECola)}`;
+                document.getElementById('qrCodeImg').src = qrCodeUrl;
                 
                 document.getElementById('pixLoading').style.display = 'none';
                 document.getElementById('pixContent').style.display = 'flex';
