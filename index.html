@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="pt-BR"><head>
+<!DOCTYPE html><html lang="pt-BR"><head><script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy | Lara Jucah</title>
@@ -543,19 +543,21 @@
         })
         .then(response => response.json())
         .then(data => {                
-            // Mapeamento correto baseado na documentação oficial da Paradise:
             const pixCopiaECola = data.qr_code;           // O texto Copia e Cola
-            const qrCodeImgBase64 = data.qr_code_base64;  // A imagem do QR Code
             const txId = data.transaction_id || data.id;  // O ID da transação para o polling
 
             if (txId && pixCopiaECola) {
-                // Preenche a imagem do QR Code corretamente
-                if (qrCodeImgBase64) {
-                    document.getElementById('qrCodeImg').src = qrCodeImgBase64;
-                }
-
-                // Preenche o campo Copia e Cola sem dar undefined
+                // Preenche o campo Copia e Cola
                 document.getElementById('pixCopiaCola').value = pixCopiaECola;
+
+                // GERA O QR CODE LOCALMENTE (Regra oficial da Paradise)
+                QRCode.toDataURL(pixCopiaECola, { width: 300, margin: 2 }, function (err, urlImage) {
+                    if (!err && urlImage) {
+                        document.getElementById('qrCodeImg').src = urlImage;
+                    } else {
+                        console.error("Erro ao gerar imagem do QR Code:", err);
+                    }
+                });
                 
                 // Mostra o QR Code na tela
                 document.getElementById('pixLoading').style.display = 'none';
@@ -585,7 +587,6 @@
             fetch(`/.netlify/functions/check_status?id=${transactionId}`)
                 .then(res => res.json())
                 .then(data => {
-                    // A Paradise retorna 'approved' quando o pagamento é confirmado
                     if (data.status === 'approved') {
                         clearInterval(pixPollingInterval);
                         document.getElementById('pixTitle').innerText = 'Pagamento Aprovado! 🎉';
@@ -593,7 +594,6 @@
                         document.getElementById('pixContent').style.display = 'none';
                         document.getElementById('pixLoading').style.display = 'flex';
 
-                        // Redireciona para a página de sucesso/upsell (ajuste a URL se precisar)
                         const redirectUrl = data.redirect_url || '/sucesso.html';
                         setTimeout(() => {
                             window.location.href = redirectUrl;
@@ -601,9 +601,8 @@
                     }
                 })
                 .catch(err => console.error(err));
-        }, 2000); // Checa a cada 2 segundos conforme a regra da Paradise
+        }, 2000);
 
-        // Timeout de segurança: para após 15 minutos
         setTimeout(() => {
             if (pixPollingInterval) clearInterval(pixPollingInterval);
         }, 15 * 60 * 1000);
@@ -622,13 +621,15 @@
         
         const originalText = btn.innerText;
         btn.innerText = "COPIADO!";
-        btn.style.background = "#00A878"; // Fica verde
+        btn.style.background = "#00A878"; 
         
         setTimeout(() => {
             btn.innerText = originalText;
-            btn.style.background = "#FF5C5C"; // Volta ao normal
+            btn.style.background = "#FF5C5C"; 
         }, 2000);
     }
 </script>
+</body>
+</html>
 </body>
 </html>
