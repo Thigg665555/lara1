@@ -14,7 +14,8 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '725645170604721');
     fbq('track', 'PageView');
-        </script><style>
+        </script>
+    <style>
     /* Overlay do Modal */
     .pix-modal-overlay {
         position: fixed;
@@ -802,17 +803,30 @@
     let pixPollingInterval = null;
 
     function openCheckout(precoClicado = 19.90, nomeDoPlano = 'Padrão') {
-        // Exibe o modal e o loading
-        document.getElementById('pixModal').style.display = 'flex';
-        document.getElementById('pixContent').style.display = 'none';
-        document.getElementById('pixLoading').style.display = 'flex';
-        
-        // Atualiza o preço dinamicamente no modal novo
-        const precoFormatado = precoClicado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        document.getElementById('pixValorExibido').innerText = precoFormatado;
-        document.getElementById('pixSubtitle').innerText = 'Gerando seu código Pix Seguro...';
+        console.log("Abrindo checkout com valor:", precoClicado);
 
-        // Requisição para criar o pix na Netlify/Paradise
+        const modal = document.getElementById('pixModal');
+        const pixContent = document.getElementById('pixContent');
+        const pixLoading = document.getElementById('pixLoading');
+        const pixValorExibido = document.getElementById('pixValorExibido');
+        const pixSubtitle = document.getElementById('pixSubtitle');
+
+        // Exibe o modal com segurança
+        if (modal) modal.style.display = 'flex';
+        if (pixContent) pixContent.style.display = 'none';
+        if (pixLoading) pixLoading.style.display = 'flex';
+        
+        // Atualiza o valor na tela se o campo existir
+        if (pixValorExibido) {
+            const precoFormatado = Number(precoClicado).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            pixValorExibido.innerText = precoFormatado;
+        }
+        
+        if (pixSubtitle) {
+            pixSubtitle.innerText = 'Gerando seu código Pix Seguro...';
+        }
+
+        // Requisição para criar o Pix
         fetch('/.netlify/functions/create_pix', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -824,18 +838,17 @@
             const txId = data.transaction_id || data.id;  
 
             if (txId && pixCopiaECola) {
-                // Preenche o input Copia e Cola
-                document.getElementById('pixCopiaCola').value = pixCopiaECola;
+                const inputCopiaCola = document.getElementById('pixCopiaCola');
+                if (inputCopiaCola) inputCopiaCola.value = pixCopiaECola;
 
-                // Gera o QR Code visual
-                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCopiaECola)}`;
-                document.getElementById('qrCodeImg').src = qrCodeUrl;
+                const qrImg = document.getElementById('qrCodeImg');
+                if (qrImg) {
+                    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCopiaECola)}`;
+                }
                 
-                // Oculta o loading e mostra o conteúdo do pix
-                document.getElementById('pixLoading').style.display = 'none';
-                document.getElementById('pixContent').style.display = 'flex';
+                if (pixLoading) pixLoading.style.display = 'none';
+                if (pixContent) pixContent.style.display = 'flex';
 
-                // Inicia o polling de verificação
                 startPolling(txId);
             } else {
                 alert("Erro ao gerar Pix: " + (data.error || "Resposta inválida da API."));
@@ -858,9 +871,14 @@
                 .then(data => {
                     if (data.status === 'approved') {
                         clearInterval(pixPollingInterval);
-                        document.getElementById('pixLoading').style.display = 'flex';
-                        document.getElementById('pixContent').style.display = 'none';
-                        document.getElementById('pixSubtitle').innerText = 'Pagamento Aprovado! 🎉 Redirecionando...';
+                        
+                        const pixLoading = document.getElementById('pixLoading');
+                        const pixContent = document.getElementById('pixContent');
+                        const pixSubtitle = document.getElementById('pixSubtitle');
+
+                        if (pixLoading) pixLoading.style.display = 'flex';
+                        if (pixContent) pixContent.style.display = 'none';
+                        if (pixSubtitle) pixSubtitle.innerText = 'Pagamento Aprovado! 🎉 Redirecionando...';
 
                         const redirectUrl = data.redirect_url || '/sucesso.html';
                         setTimeout(() => {
@@ -877,12 +895,15 @@
     }
 
     function closePixModal() {
-        document.getElementById('pixModal').style.display = 'none';
+        const modal = document.getElementById('pixModal');
+        if (modal) modal.style.display = 'none';
         if (pixPollingInterval) clearInterval(pixPollingInterval);
     }
 
     function copyPix(btn) {
         const input = document.getElementById('pixCopiaCola');
+        if (!input) return;
+
         input.select();
         input.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(input.value);
@@ -896,7 +917,7 @@
             btn.style.background = "#FF5C5C"; 
         }, 2000);
     }
-</script>
+</script>>
 </body>
 </html>
 </body>
