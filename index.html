@@ -61,12 +61,11 @@
         justify-content: center;
     }
 
-   /* Banner do Topo Enquadrado */
+   /* Banner do Topo (Sem cortar o avatar) */
     .pix-banner {
         width: 100%;
-        height: 120px;
+        height: 110px;
         position: relative;
-        overflow: hidden;
         background: #1a202c;
     }
 
@@ -75,6 +74,21 @@
         height: 100%;
         object-fit: cover;
         object-position: center;
+        display: block;
+    }
+
+    /* Container do Avatar Centralizado */
+    .pix-avatar-container {
+        position: absolute;
+        bottom: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 3px solid #121620;
+        background: #121620;
+        z-index: 5;
     }
 
     .pix-avatar {
@@ -82,17 +96,19 @@
         height: 100%;
         border-radius: 50%;
         object-fit: cover;
+        display: block;
     }
 
     .pix-online-dot {
         position: absolute;
-        bottom: 5px;
-        right: 5px;
+        bottom: 2px;
+        right: 2px;
         width: 12px;
         height: 12px;
         background: #00E676;
         border: 2px solid #121620;
         border-radius: 50%;
+        z-index: 6;
     }
 
     /* Informações do Perfil */
