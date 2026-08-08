@@ -866,9 +866,18 @@
 </div>
 <script>
     let pixPollingInterval = null;
-    let currentPreco = 14.90; // Preço padrão guardado
+    let currentPreco = 14.90;
 
-    // 1. Abre o modal e mostra o campo de e-mail
+    // Função que lê os parâmetros de UTM na barra do navegador
+    function getUtmParams() {
+        const params = new URLSearchParams(window.location.search);
+        let utms = {};
+        for (const [key, value] of params.entries()) {
+            utms[key] = value;
+        }
+        return utms;
+    }
+
     function openCheckout(precoClicado = 14.90, nomeDoPlano = 'Padrão') {
         currentPreco = precoClicado;
 
@@ -883,34 +892,43 @@
         if (pixContent) pixContent.style.display = 'none';
         if (pixLoading) pixLoading.style.display = 'none';
 
-        // Atualiza o valor na tela
         if (pixValorExibido) {
             const precoFormatado = Number(precoClicado).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             pixValorExibido.innerText = precoFormatado;
         }
     }
 
-    // 2. Valida o e-mail e gera o Pix
     function submitEmailAndGeneratePix() {
         const emailInput = document.getElementById('leadEmail');
         const email = emailInput ? emailInput.value.trim() : '';
 
-        // Validação simples de e-mail
         if (!email || !email.includes('@') || !email.includes('.')) {
             alert('Por favor, digite um e-mail válido para continuar.');
             return;
         }
 
-        // Esconde o form de e-mail e mostra o loading
+        // 1. CAPTURA AS UTMS DA URL
+        const utms = getUtmParams();
+
+        // 2. DISPARA O INITIATE CHECKOUT NA UTMFY
+        if (typeof window.utmify === 'function') {
+            window.utmify('track', 'InitiateCheckout');
+        }
+
         document.getElementById('pixStepEmail').style.display = 'none';
         document.getElementById('pixLoading').style.display = 'flex';
         document.getElementById('pixSubtitle').innerText = 'Gerando seu código Pix Seguro...';
 
-        // Requisição enviando o valor E o e-mail do lead
+        // 3. ENVIA O PREÇO, E-MAIL E AS UTMS PARA O SERVIDOR
         fetch('/.netlify/functions/create_pix', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ preco: currentPreco, email: email })
+            body: JSON.stringify({ 
+                preco: currentPreco, 
+                email: email,
+                utms: utms,
+                src: utms.src || utms.utm_source || ''
+            })
         })
         .then(response => response.json())
         .then(data => {                
