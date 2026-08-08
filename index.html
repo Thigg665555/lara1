@@ -283,6 +283,56 @@
         background: #0c0f16;
         border-top: 1px solid #1a2230;
     }
+   /* Estilo do Campo de E-mail */
+    .pix-email-step {
+        padding: 0 20px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pix-input-label {
+        font-size: 12px;
+        color: #cbd5e1;
+        text-align: left;
+        display: block;
+    }
+
+    .pix-input {
+        width: 100%;
+        padding: 12px 14px;
+        background: #090c10;
+        border: 1px solid #2a3447;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 14px;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+    }
+
+    .pix-input:focus {
+        border-color: #FF5C5C;
+    }
+
+    .pix-submit-btn {
+        width: 100%;
+        background: #00E676;
+        color: #000000;
+        font-weight: 800;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .pix-submit-btn:hover {
+        background: #00c853;
+    }         
 </style>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=725645170604721&ev=PageView&noscript=1"
@@ -744,7 +794,7 @@
     </section>
 
 
-<!-- MODAL DE CHECKOUT (CÓDIGO ISOLADO E CORRIGIDO) -->
+<!-- MODAL COM ETAPA DE E-MAIL -->
 <div id="pixModal" class="pix-modal-overlay">
     <div class="pix-modal-card">
         <!-- Botão de Fechar -->
@@ -776,20 +826,27 @@
             </ul>
         </div>
 
-        <!-- Seção de Pagamento e Valor -->
+        <!-- Seção de Valor -->
         <div class="pix-payment-header">
             <span class="pix-payment-title">Formas de pagamento</span>
             <span class="pix-val-label">valor</span>
             <h3 id="pixValorExibido" class="pix-price">R$ 14,90</h3>
         </div>
 
-        <!-- Área de Loading -->
-        <div id="pixLoading" class="pix-loading-area">
+        <!-- ETAPA 1: CAPTURA DE E-MAIL (NOVO) -->
+        <div id="pixStepEmail" class="pix-email-step">
+            <label class="pix-input-label" for="leadEmail">Digite seu e-mail para liberar o acesso:</label>
+            <input type="email" id="leadEmail" class="pix-input" placeholder="seuemail@exemplo.com" required />
+            <button onclick="submitEmailAndGeneratePix()" class="pix-submit-btn">GERAR PIX AGORA ➔</button>
+        </div>
+
+        <!-- ETAPA 2: CARREGAMENTO (Escondido inicialmente) -->
+        <div id="pixLoading" class="pix-loading-area" style="display: none;">
             <div class="pix-spinner"></div>
             <p id="pixSubtitle">Gerando seu código Pix Seguro...</p>
         </div>
 
-        <!-- Conteúdo do Pix (QR Code e Copia e Cola) -->
+        <!-- ETAPA 3: CONTEÚDO DO PIX (Escondido inicialmente) -->
         <div id="pixContent" class="pix-content-area" style="display: none;">
             <div class="pix-qrcode-box">
                 <img id="qrCodeImg" src="" alt="QR Code Pix">
@@ -809,36 +866,51 @@
 </div>
 <script>
     let pixPollingInterval = null;
+    let currentPreco = 14.90; // Preço padrão guardado
 
-    function openCheckout(precoClicado = 19.90, nomeDoPlano = 'Padrão') {
-        console.log("Abrindo checkout com valor:", precoClicado);
+    // 1. Abre o modal e mostra o campo de e-mail
+    function openCheckout(precoClicado = 14.90, nomeDoPlano = 'Padrão') {
+        currentPreco = precoClicado;
 
         const modal = document.getElementById('pixModal');
+        const pixStepEmail = document.getElementById('pixStepEmail');
         const pixContent = document.getElementById('pixContent');
         const pixLoading = document.getElementById('pixLoading');
         const pixValorExibido = document.getElementById('pixValorExibido');
-        const pixSubtitle = document.getElementById('pixSubtitle');
 
-        // Exibe o modal com segurança
         if (modal) modal.style.display = 'flex';
+        if (pixStepEmail) pixStepEmail.style.display = 'flex';
         if (pixContent) pixContent.style.display = 'none';
-        if (pixLoading) pixLoading.style.display = 'flex';
-        
-        // Atualiza o valor na tela se o campo existir
+        if (pixLoading) pixLoading.style.display = 'none';
+
+        // Atualiza o valor na tela
         if (pixValorExibido) {
             const precoFormatado = Number(precoClicado).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             pixValorExibido.innerText = precoFormatado;
         }
-        
-        if (pixSubtitle) {
-            pixSubtitle.innerText = 'Gerando seu código Pix Seguro...';
+    }
+
+    // 2. Valida o e-mail e gera o Pix
+    function submitEmailAndGeneratePix() {
+        const emailInput = document.getElementById('leadEmail');
+        const email = emailInput ? emailInput.value.trim() : '';
+
+        // Validação simples de e-mail
+        if (!email || !email.includes('@') || !email.includes('.')) {
+            alert('Por favor, digite um e-mail válido para continuar.');
+            return;
         }
 
-        // Requisição para criar o Pix
+        // Esconde o form de e-mail e mostra o loading
+        document.getElementById('pixStepEmail').style.display = 'none';
+        document.getElementById('pixLoading').style.display = 'flex';
+        document.getElementById('pixSubtitle').innerText = 'Gerando seu código Pix Seguro...';
+
+        // Requisição enviando o valor E o e-mail do lead
         fetch('/.netlify/functions/create_pix', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ preco: precoClicado })
+            body: JSON.stringify({ preco: currentPreco, email: email })
         })
         .then(response => response.json())
         .then(data => {                
@@ -854,8 +926,8 @@
                     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pixCopiaECola)}`;
                 }
                 
-                if (pixLoading) pixLoading.style.display = 'none';
-                if (pixContent) pixContent.style.display = 'flex';
+                document.getElementById('pixLoading').style.display = 'none';
+                document.getElementById('pixContent').style.display = 'flex';
 
                 startPolling(txId);
             } else {
@@ -880,13 +952,9 @@
                     if (data.status === 'approved') {
                         clearInterval(pixPollingInterval);
                         
-                        const pixLoading = document.getElementById('pixLoading');
-                        const pixContent = document.getElementById('pixContent');
-                        const pixSubtitle = document.getElementById('pixSubtitle');
-
-                        if (pixLoading) pixLoading.style.display = 'flex';
-                        if (pixContent) pixContent.style.display = 'none';
-                        if (pixSubtitle) pixSubtitle.innerText = 'Pagamento Aprovado! 🎉 Redirecionando...';
+                        document.getElementById('pixLoading').style.display = 'flex';
+                        document.getElementById('pixContent').style.display = 'none';
+                        document.getElementById('pixSubtitle').innerText = 'Pagamento Aprovado! 🎉 Redirecionando...';
 
                         const redirectUrl = data.redirect_url || '/sucesso.html';
                         setTimeout(() => {
@@ -925,7 +993,7 @@
             btn.style.background = "#FF5C5C"; 
         }, 2000);
     }
-</script>>
+</script>
 </body>
 </html>
 </body>
